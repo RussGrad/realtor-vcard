@@ -15,6 +15,8 @@
   var pendingPhoto = null;
 
   var MAX_STORAGE_TRY = 2400000;
+  var PHOTO_MAX_SIDE = 900;
+  var PHOTO_JPEG_QUALITY = 0.82;
 
   function clone(o) {
     return JSON.parse(JSON.stringify(o));
@@ -55,6 +57,56 @@
     } else {
       prev.textContent = getInitials(name);
     }
+  }
+
+  function downscaleImageToJpegDataUrl(sourceDataUrl) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var w = img.naturalWidth || img.width;
+          var h = img.naturalHeight || img.height;
+          if (!w || !h) {
+            resolve(sourceDataUrl);
+            return;
+          }
+          var scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(w, h));
+          var tw = Math.max(1, Math.round(w * scale));
+          var th = Math.max(1, Math.round(h * scale));
+          var canvas = document.createElement("canvas");
+          canvas.width = tw;
+          canvas.height = th;
+          var ctx = canvas.getContext("2d");
+          if (!ctx) {
+            resolve(sourceDataUrl);
+            return;
+          }
+          ctx.drawImage(img, 0, 0, tw, th);
+          var out = canvas.toDataURL("image/jpeg", PHOTO_JPEG_QUALITY);
+          resolve(out);
+        } catch (e) {
+          resolve(sourceDataUrl);
+        }
+      };
+      img.onerror = function () {
+        reject(new Error("Не удалось прочитать изображение"));
+      };
+      img.src = sourceDataUrl;
+    });
+  }
+
+  function dataUrlToBlob(dataUrl) {
+    var parts = String(dataUrl).split(",");
+    if (parts.length < 2) return null;
+    var meta = parts[0];
+    var b64 = parts.slice(1).join(",");
+    var mimeMatch = /data:([^;]+);base64/i.exec(meta);
+    var mime = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+    var bin = atob(b64);
+    var len = bin.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) bytes[i] = bin.charCodeAt(i);
+    return new Blob([bytes], { type: mime });
   }
 
   function serviceRow(d, index) {
@@ -395,18 +447,26 @@
     fileInp.addEventListener("change", function () {
       var file = fileInp.files && fileInp.files[0];
       if (!file) return;
-      if (file.size > 2.5 * 1024 * 1024) {
-        showMsg("Файл больше 2,5 МБ — выберите меньшее изображение.", false);
+      if (file.size > 8 * 1024 * 1024) {
+        showMsg("Файл больше 8 МБ — выберите меньшее изображение.", false);
         fileInp.value = "";
         return;
       }
       var r = new FileReader();
       r.onload = function () {
-        pendingPhoto = String(r.result || "");
-        var nm =
-          (root.querySelector(".f-name input") && root.querySelector(".f-name input").value) ||
-          d.name;
-        updatePreview(pr, nm, pendingPhoto);
+        var raw = String(r.result || "");
+        downscaleImageToJpegDataUrl(raw)
+          .then(function (jpeg) {
+            pendingPhoto = jpeg;
+            var nm =
+              (root.querySelector(".f-name input") && root.querySelector(".f-name input").value) ||
+              d.name;
+            updatePreview(pr, nm, pendingPhoto);
+            showMsg("Фото загружено и оптимизировано. Нажмите «Сохранить».", true);
+          })
+          .catch(function () {
+            showMsg("Не удалось обработать фото. Попробуйте другое изображение.", false);
+          });
       };
       r.readAsDataURL(file);
     });
@@ -649,6 +709,42 @@
       );
     });
 
+    var btnAvatar = document.createElement("button");
+    btnAvatar.type = "button";
+    btnAvatar.className = "cabinet-btn-secondary";
+    btnAvatar.textContent = "Скачать фото (avatar.jpg)";
+    btnAvatar.title =
+      "Скачайте файл и положите рядом с index.html. В поле «Ссылка на фото» укажите ./avatar.jpg";
+    btnAvatar.addEventListener("click", function () {
+      var data = collect();
+      var src = data.photoUrl && String(data.photoUrl).trim();
+      if (!src) {
+        showMsg("Фото не выбрано. Загрузите файл или укажите ссылку на фото.", false);
+        return;
+      }
+      if (src.indexOf("data:") !== 0) {
+        showMsg(
+          "Сейчас указана ссылка на фото. Если хотите — просто положите картинку на хостинг и используйте URL/./avatar.jpg.",
+          true
+        );
+        return;
+      }
+      var blob = dataUrlToBlob(src);
+      if (!blob) {
+        showMsg("Не удалось подготовить файл фото.", false);
+        return;
+      }
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "avatar.jpg";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showMsg(
+        "Фото скачано как avatar.jpg. Загрузите его в репозиторий рядом с index.html и укажите в кабинете ./avatar.jpg, затем обновите published.json.",
+        true
+      );
+    });
+
     var importLabel = document.createElement("label");
     importLabel.className = "cabinet-btn-secondary";
     importLabel.style.cursor = "pointer";
@@ -686,6 +782,7 @@
     actions.appendChild(btnReset);
     actions.appendChild(btnExport);
     actions.appendChild(btnPublish);
+    actions.appendChild(btnAvatar);
     actions.appendChild(importLabel);
     wrap.appendChild(actions);
 
