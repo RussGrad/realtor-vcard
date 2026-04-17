@@ -1,0 +1,470 @@
+/* Личный кабинет: редактирование данных визитки */
+
+.cabinet {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+  background: linear-gradient(to bottom, #ecfdf5, #fff 35%, #fafafa);
+  color: #18181b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet {
+    background: linear-gradient(to bottom, #0a0a0a, #18181b 40%, #000);
+    color: #fafafa;
+  }
+}
+
+.cabinet-wrap {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.cabinet-header {
+  margin-bottom: 1.5rem;
+}
+
+.cabinet-header h1 {
+  margin: 0 0 0.5rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.cabinet-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.cabinet-logout {
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 0.45rem;
+  background: #fff;
+  color: #52525b;
+  cursor: pointer;
+}
+
+.cabinet-logout:hover {
+  background: #f4f4f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-logout {
+    border-color: #52525b;
+    background: #27272a;
+    color: #d4d4d8;
+  }
+
+  .cabinet-logout:hover {
+    background: #3f3f46;
+  }
+}
+
+/* Экран входа в кабинет */
+.cabinet-login-wrap {
+  max-width: 22rem;
+  margin: 0 auto;
+  padding: 2.5rem 1rem;
+}
+
+.cabinet-login-card {
+  padding: 1.75rem 1.35rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(228, 228, 231, 0.95);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-login-card {
+    border-color: #3f3f46;
+    background: rgba(24, 24, 27, 0.95);
+  }
+}
+
+.cabinet-login-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.cabinet-login-text {
+  margin: 0 0 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #52525b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-login-text {
+    color: #a1a1aa;
+  }
+}
+
+.cabinet-login-err {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: #b91c1c;
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-login-err {
+    color: #fca5a5;
+  }
+}
+
+.cabinet-login-label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.cabinet-login-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.55rem 0.75rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-login-input {
+    border-color: #52525b;
+    background: #18181b;
+  }
+}
+
+.cabinet-login-submit {
+  width: 100%;
+  padding: 0.65rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.6rem;
+  background: linear-gradient(to bottom right, #059669, #047857);
+  color: #fff;
+  cursor: pointer;
+}
+
+.cabinet-login-submit:hover {
+  filter: brightness(1.05);
+}
+
+.cabinet-login-back {
+  display: inline-block;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: #047857;
+  text-decoration: none;
+}
+
+.cabinet-login-back:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-login-back {
+    color: #6ee7b7;
+  }
+}
+
+.cabinet-back {
+  font-size: 0.875rem;
+  color: #047857;
+  text-decoration: none;
+}
+
+.cabinet-back:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-back {
+    color: #6ee7b7;
+  }
+}
+
+.cabinet-section {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(228, 228, 231, 0.95);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-section {
+    border-color: #3f3f46;
+    background: rgba(24, 24, 27, 0.92);
+  }
+}
+
+.cabinet-section h2 {
+  margin: 0 0 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.cabinet-field {
+  margin-bottom: 0.9rem;
+}
+
+.cabinet-field:last-child {
+  margin-bottom: 0;
+}
+
+.cabinet-field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #52525b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-field label {
+    color: #a1a1aa;
+  }
+}
+
+.cabinet-field input[type="text"],
+.cabinet-field input[type="url"],
+.cabinet-field input[type="tel"],
+.cabinet-field input[type="email"],
+.cabinet-field textarea {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.9rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-field input[type="text"],
+  .cabinet-field input[type="url"],
+  .cabinet-field input[type="tel"],
+  .cabinet-field input[type="email"],
+  .cabinet-field textarea {
+    border-color: #52525b;
+    background: #27272a;
+  }
+}
+
+.cabinet-field textarea {
+  min-height: 4rem;
+  resize: vertical;
+}
+
+.cabinet-field input:focus,
+.cabinet-field textarea:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 1px;
+}
+
+.cabinet-photo-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.cabinet-photo-preview {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  background: linear-gradient(to bottom right, #10b981, #0f766e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.cabinet-photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cabinet-photo-controls {
+  flex: 1;
+  min-width: 12rem;
+}
+
+.cabinet-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: #71717a;
+}
+
+.cabinet-row-block {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 0.65rem;
+  border: 1px dashed #d4d4d8;
+  background: rgba(250, 250, 250, 0.8);
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-row-block {
+    border-color: #52525b;
+    background: rgba(39, 39, 42, 0.5);
+  }
+}
+
+.cabinet-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.65rem;
+}
+
+.cabinet-row-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #52525b;
+}
+
+.cabinet-btn-remove {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  border: none;
+  border-radius: 0.35rem;
+  background: #fef2f2;
+  color: #b91c1c;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-btn-remove {
+    background: #450a0a;
+    color: #fca5a5;
+  }
+}
+
+.cabinet-btn-add {
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.85rem;
+  border: 1px solid #10b981;
+  border-radius: 0.5rem;
+  background: rgba(209, 250, 229, 0.5);
+  color: #065f46;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-btn-add {
+    background: rgba(6, 78, 59, 0.4);
+    color: #a7f3d0;
+    border-color: #059669;
+  }
+}
+
+.cabinet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 480px) {
+  .cabinet-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+
+.cabinet-btn-primary {
+  padding: 0.65rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.65rem;
+  background: linear-gradient(to bottom right, #059669, #047857);
+  color: #fff;
+  cursor: pointer;
+}
+
+.cabinet-btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.cabinet-btn-secondary {
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  border: 1px solid #d4d4d8;
+  border-radius: 0.6rem;
+  background: #fff;
+  color: inherit;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-btn-secondary {
+    border-color: #52525b;
+    background: #27272a;
+  }
+}
+
+.cabinet-msg {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.5rem;
+  display: none;
+}
+
+.cabinet-msg--ok {
+  display: block;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.cabinet-msg--err {
+  display: block;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+@media (prefers-color-scheme: dark) {
+  .cabinet-msg--ok {
+    background: rgba(6, 78, 59, 0.5);
+    color: #a7f3d0;
+  }
+
+  .cabinet-msg--err {
+    background: rgba(127, 29, 29, 0.45);
+    color: #fecaca;
+  }
+}
+
+.cabinet-file {
+  font-size: 0.85rem;
+  margin-top: 0.35rem;
+}
+
+.cabinet-import-wrap {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+}

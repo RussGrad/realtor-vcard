@@ -1,0 +1,698 @@
+/* Визитка риэлтора: современный, деловой стиль (чистая типографика + аккуратные карточки). */
+
+/* ---- Палитра и токены (светлая тема по умолчанию) ---- */
+:root {
+  /* Фон страницы (спокойный нейтральный градиент) */
+  --bg-top: #f6f7fb;
+  --bg-mid: #ffffff;
+  --bg-bottom: #f3f4f6;
+
+  /* Поверхность карточек */
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-2: rgba(249, 250, 251, 0.88);
+
+  /* Границы и разделители */
+  --border: rgba(228, 228, 231, 0.95);
+  --divider: rgba(228, 228, 231, 0.85);
+
+  /* Текст */
+  --text: #0f172a;
+  --text-muted: #475569;
+  --text-soft: #64748b;
+
+  /* Деловой акцент (сине-зелёный) */
+  --accent: #0f766e;
+  --accent-ink: #0b4f49;
+  --accent-soft: rgba(15, 118, 110, 0.12);
+
+  /* Геометрия */
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  /* Тени (чуть «премиальнее», но без агрессии) */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 8px 18px rgba(15, 23, 42, 0.07);
+
+  /* Кольцо аватара */
+  --ring: rgba(15, 118, 110, 0.22);
+  --ring-offset: rgba(15, 23, 42, 0.06);
+}
+
+/* ---- Тёмная тема (системная настройка ОС) ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-top: #070a10;
+    --bg-mid: #0b1220;
+    --bg-bottom: #05070d;
+
+    --surface: rgba(15, 23, 42, 0.78);
+    --surface-2: rgba(2, 6, 23, 0.6);
+
+    --border: rgba(51, 65, 85, 0.55);
+    --divider: rgba(51, 65, 85, 0.45);
+
+    --text: #e5e7eb;
+    --text-muted: #cbd5e1;
+    --text-soft: #94a3b8;
+
+    --accent: #5eead4;
+    --accent-ink: #99f6e4;
+    --accent-soft: rgba(94, 234, 212, 0.14);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+    --shadow-card: 0 10px 24px rgba(0, 0, 0, 0.4);
+
+    --ring: rgba(94, 234, 212, 0.24);
+    --ring-offset: rgba(2, 6, 23, 0.65);
+  }
+}
+
+/* Считаем padding и border частью ширины блока */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Страница: фон, базовый шрифт и сглаживание */
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(
+    to bottom,
+    var(--bg-top),
+    var(--bg-mid) 40%,
+    var(--bg-bottom)
+  );
+  color: var(--text);
+}
+
+/* Ссылки по умолчанию (без «синего» браузерного стиля) */
+a {
+  color: inherit;
+}
+
+/* Предупреждение при открытии страницы как file:// (данные кабинета не совпадут с http://) */
+.vcard__file-warning {
+  margin-bottom: 1.25rem;
+  padding: 1rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  background: rgba(255, 251, 235, 0.86);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #78350f;
+  box-shadow: var(--shadow-sm);
+}
+
+.vcard__file-warning code {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.25rem;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__file-warning {
+    background: rgba(120, 53, 15, 0.22);
+    border-color: rgba(245, 158, 11, 0.35);
+    color: #fde68a;
+  }
+
+  .vcard__file-warning code {
+    background: rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Контейнер визитки: узкая колонка по центру */
+.vcard {
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 2.25rem 1rem 4rem;
+}
+
+/* На широком экране чуть больше отступ сверху */
+@media (min-width: 640px) {
+  .vcard {
+    padding-top: 3.5rem;
+  }
+}
+
+/* Вертикальный стек всех секций */
+.vcard__stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ---- Шапка: имя, роль, слоган ---- */
+.vcard__hero {
+  text-align: center;
+}
+
+/* Обёртка круглого аватара: тонкие кольца и мягкая тень */
+.vcard__avatar-wrap {
+  position: relative;
+  width: 6.75rem;
+  height: 6.75rem;
+  margin: 0 auto 1rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  outline: 1px solid var(--ring-offset);
+  box-shadow:
+    0 0 0 6px var(--ring-offset),
+    0 0 0 10px var(--ring),
+    var(--shadow-card);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__avatar-wrap {
+    box-shadow:
+      0 0 0 6px rgba(2, 6, 23, 0.55),
+      0 0 0 10px var(--ring),
+      var(--shadow-card);
+  }
+}
+
+/* Фотография в круге */
+.vcard__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Заглушка без фото: инициалы на градиенте */
+.vcard__avatar-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #0f766e, #155e75);
+}
+
+/* ФИО: фамилия сверху, имя+отчество ниже */
+.vcard__namebox {
+  margin-top: 0.35rem;
+}
+
+.vcard__lastname {
+  margin: 0;
+  font-size: 1.7rem;
+  font-weight: 820;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.vcard__firstname {
+  margin: 0.2rem 0 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  color: var(--text-muted);
+}
+
+/* Должность / специализация */
+.vcard__role {
+  margin: 0.65rem 0 0;
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: var(--accent);
+}
+
+/* Краткое описание под шапкой */
+.vcard__tagline {
+  margin: 0.75rem auto 0;
+  max-width: 22rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+}
+
+/* ---- Общий вид «карточки» секции (деловой стиль) ---- */
+.vcard__card {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  padding: 1.15rem 1.1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Заголовок блока (Услуги, Прайс, …) */
+.vcard__h2 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* ---- Услуги ---- */
+.vcard__list {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Отступ между пунктами услуг */
+.vcard__service + .vcard__service {
+  margin-top: 1rem;
+}
+
+/* Название услуги */
+.vcard__service-title {
+  margin: 0;
+  font-weight: 650;
+  font-size: 0.95rem;
+}
+
+/* Текст услуги */
+.vcard__service-text {
+  margin: 0.35rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+}
+
+/* ---- Прайс ---- */
+.vcard__price-list {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Строка прайса: на узком экране колонка, на широком — строка с ценой справа */
+.vcard__price-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.vcard__price-item:first-child {
+  padding-top: 0;
+}
+
+.vcard__price-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@media (min-width: 480px) {
+  .vcard__price-item {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+}
+
+/* Название позиции в прайсе */
+.vcard__price-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Примечание под названием (мелко) */
+.vcard__price-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+/* Сумма / процент */
+.vcard__price-value {
+  font-size: 0.93rem;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+/* Вводный текст перед ссылками на отзывы */
+.vcard__hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+/* ---- Ссылки на отзывы (внешние площадки) ---- */
+.vcard__reviews {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Кнопка-ссылка на отзыв */
+.vcard__link-btn {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.55);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 650;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.vcard__link-btn:hover {
+  border-color: rgba(15, 118, 110, 0.45);
+  background: rgba(15, 118, 110, 0.08);
+  transform: translateY(-1px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__link-btn {
+    background: rgba(2, 6, 23, 0.35);
+  }
+
+  .vcard__link-btn:hover {
+    border-color: rgba(94, 234, 212, 0.25);
+    background: rgba(94, 234, 212, 0.08);
+  }
+}
+
+/* Внутри кнопки: название площадки + подпись */
+.vcard__link-btn-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+/* Подпись под названием ссылки */
+.vcard__link-desc {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-soft);
+}
+
+/* ---- Контакты (телефон, мессенджеры, почта) ---- */
+.vcard__contacts {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Одна строка контакта */
+.vcard__contact {
+  display: flex;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(15, 118, 110, 0.28);
+  background: rgba(15, 118, 110, 0.07);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__contact {
+    border-color: rgba(94, 234, 212, 0.2);
+    background: rgba(2, 6, 23, 0.25);
+  }
+}
+
+.vcard__contact:hover {
+  background: rgba(15, 118, 110, 0.11);
+  border-color: rgba(15, 118, 110, 0.5);
+  transform: translateY(-1px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__contact:hover {
+    background: rgba(94, 234, 212, 0.08);
+  }
+}
+
+/* Подпись типа контакта (Телефон, WhatsApp…) */
+.vcard__contact-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-soft);
+}
+
+/* Действие на кнопке (Позвонить, Написать…) */
+.vcard__contact-action {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* Стрелка справа */
+.vcard__contact-arrow {
+  color: var(--accent-soft);
+  flex-shrink: 0;
+}
+
+/* ---- Нижняя подпись страницы ---- */
+.vcard__footer {
+  margin: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+
+/* Ссылка в кабинет редактирования (для владельца) */
+.vcard__cabinet-hint {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.vcard__cabinet-link {
+  color: var(--text-soft);
+  text-decoration: none;
+  text-underline-offset: 2px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.vcard__cabinet-link:hover {
+  color: var(--accent-soft);
+  border-color: rgba(15, 118, 110, 0.35);
+  background: rgba(15, 118, 110, 0.08);
+}
+
+/* ---- Поделиться (кнопка) ---- */
+.vcard__share-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.25rem;
+}
+
+.vcard__primary-btn {
+  appearance: none;
+  border: 1px solid rgba(15, 118, 110, 0.35);
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(21, 94, 117, 0.12));
+  color: var(--text);
+  border-radius: 9999px;
+  padding: 0.6rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.vcard__primary-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(15, 118, 110, 0.55);
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.22), rgba(21, 94, 117, 0.16));
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__primary-btn {
+    background: linear-gradient(135deg, rgba(94, 234, 212, 0.12), rgba(56, 189, 248, 0.08));
+    border-color: rgba(94, 234, 212, 0.24);
+  }
+  .vcard__primary-btn:hover {
+    border-color: rgba(94, 234, 212, 0.4);
+  }
+}
+
+/* ---- Модалка QR ---- */
+.vcard__modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  z-index: 9999;
+}
+
+.vcard__modal {
+  width: 100%;
+  max-width: 26rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.vcard__modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid var(--divider);
+}
+
+.vcard__modal-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.vcard__modal-close {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.35);
+  color: var(--text);
+  border-radius: 0.7rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__modal-close {
+    background: rgba(2, 6, 23, 0.35);
+  }
+}
+
+.vcard__modal-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.vcard__qr {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__qr {
+    background: rgba(2, 6, 23, 0.35);
+  }
+}
+
+.vcard__qr svg {
+  width: 14rem;
+  height: 14rem;
+  max-width: 100%;
+}
+
+.vcard__qr-link {
+  display: inline-flex;
+  border-radius: 0.75rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.vcard__qr-link:focus-visible {
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.25);
+}
+
+.vcard__qr-img {
+  width: 14rem;
+  height: 14rem;
+  max-width: 100%;
+  border-radius: 0.6rem;
+  background: #fff;
+  display: block;
+}
+
+.vcard__share-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.vcard__share-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text);
+  font-size: 0.85rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .vcard__share-input {
+    background: rgba(2, 6, 23, 0.35);
+  }
+}
+
+.vcard__share-btn {
+  appearance: none;
+  border: 1px solid rgba(15, 118, 110, 0.35);
+  background: rgba(15, 118, 110, 0.1);
+  color: var(--text);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 750;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.vcard__share-btn:hover {
+  border-color: rgba(15, 118, 110, 0.55);
+  background: rgba(15, 118, 110, 0.14);
+}
+
+.vcard__share-msg {
+  min-height: 1.1rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.vcard__share-hint {
+  font-size: 0.82rem;
+  color: var(--text-soft);
+  line-height: 1.4;
+}
